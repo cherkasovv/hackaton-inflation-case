@@ -7,12 +7,16 @@ readme = "README.md"
 packages = [{include = "case-inflation"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.8"
 fastapi = "^0.82.0"
 uvicorn = "^0.18.3"
 pydantic = {extras = ["dotenv"], version = "^1.10.2"}
-python-multipart = "^0.0.5"
 SQLAlchemy = "^1.4.41"
+python-multipart = "^0.0.4"
+pandas = "^1.5.0"
+numpy = "^1.23.3"
+xgboost = "^1.6.2"
+scikit-learn = "^1.1.2"
 
 [build-system]
 requires = ["poetry-core"]
