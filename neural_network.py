@@ -14,7 +14,7 @@ from sklearn.metrics import mean_absolute_error
 
 
 def run_neural_network(path: str, is_forecast: bool, target_path: str):
-    # загружаем данные, устанавливаем месячный период
+        # загружаем данные, устанавливаем месячный период
     ds=pd.read_csv(path, sep='\t', index_col='DateObserve')
     ds.index = pd.to_datetime(ds.index).to_period('M')
 
@@ -34,9 +34,13 @@ def run_neural_network(path: str, is_forecast: bool, target_path: str):
 
     df = df.to_frame(name='cpi_multi')
 
-    if not is_forecast:
-          # загружаем таргет 
-        data = pd.read_excel("target_path", index_col='Период')
+    # Если обучаем модель, то дополнительно берем файл с таргетами
+    if (is_forecast == False):
+    # загружаем таргет 
+        data = pd.read_excel(target_path, index_col='ИПЦ, мом')
+        data = data.T
+        data = data.set_index('Период')
+        data = data[['Целевой показатель']]
         data.index = pd.to_datetime(data.index).to_period('M')
         # соединяем таблицы
         ds = df.join(data, how='outer')
@@ -52,9 +56,8 @@ def run_neural_network(path: str, is_forecast: bool, target_path: str):
         y_test = test['Целевой показатель']
         x_test = test.drop(labels = ['Целевой показатель'], axis=1)
 
-        
 
-        xgb_r = xg.XGBRegressor(objective ='reg:linear',
+        xgb_r = xg.XGBRegressor(objective ='reg:squarederror',
                         n_estimators = 10, seed = 123)
 
         # Fitting the model
@@ -70,12 +73,11 @@ def run_neural_network(path: str, is_forecast: bool, target_path: str):
         ds = ds.reset_index()
         y = y_train.reset_index()
         y = np.array(y[['Целевой показатель']])
+        y = np.append(y,pred[0])
 
         tdf = pd.DataFrame({'период':np.array(ds.DateObserve), 'целевая функция':y})
 
-        tdf.to_csv(f'result.csv',index = False)
-
-        return tdf.to_json()
+        return tdf.to_json(orient = 'split',index = False)
 
 
 if __name__ == "__main__":
