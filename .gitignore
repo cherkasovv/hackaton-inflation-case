@@ -1,0 +1,10 @@
+#mypy
+.mypy_cache
+#system files
+__pycache__
+*.py[cod]
+#env files
+.env
+env
+./poetry.lock
+*.sqlite3

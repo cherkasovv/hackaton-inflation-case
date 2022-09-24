@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "case-inflation"
+version = "0.1.0"
+description = ""
+authors = ["Evgeny Cherkasov <cherkasovv.evgeny@gmail.com>"]
+readme = "README.md"
+packages = [{include = "case-inflation"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.82.0"
+uvicorn = "^0.18.3"
+pydantic = {extras = ["dotenv"], version = "^1.10.2"}
+python-multipart = "^0.0.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
