@@ -14,6 +14,12 @@ in next you need to install virtualenviroment in current directory
     poetry install
 ```
 
+create folder data
+
+```shell
+    mkdir data
+```
+
 if you need to create a database:
 
 ```shell
