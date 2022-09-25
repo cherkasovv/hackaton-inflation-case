@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from api import neural_network
 from db.base import YTrain, Base
 from db.session import scope, current_session, engine
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import Table
 from uuid import uuid4
 
@@ -22,3 +23,12 @@ def set_current_session(request: Request, call_next):
 @app.on_event("startup")
 def startup():
     pass
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)

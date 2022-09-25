@@ -13,8 +13,8 @@ from uuid import uuid4
 router = APIRouter()
 
 
-def start_neural_network(file_path: str):
-    results = json.loads(run_neural_network(file_path, False))['data']
+def start_neural_network(file_path_csv: str, file_path_y_train: str):
+    results = json.loads(run_neural_network(file_path_csv, False, file_path_y_train))['data']
 
     for result in results:
         model = current_session.query(YTrain).filter_by(year=int(result[0]['qyear']), month=int(result[0]['month']))
@@ -32,15 +32,23 @@ def start_neural_network(file_path: str):
     current_session.commit()
 
 
-@router.post("/send-file")
-def send_file_in_nn(file: UploadFile, start_neural_network_task: BackgroundTasks):
+def download_file(file: UploadFile):
     file_path = f"data/{file.filename}"
     if not os.path.exists(file_path):
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-    start_neural_network_task.add_task(start_neural_network, file_path=file_path)
+    
+    return file_path
+
+
+@router.post("/send-file")
+def send_file_in_nn(csv_data: UploadFile, y_train_data: UploadFile, start_neural_network_task: BackgroundTasks):
+    file_path_csv_data = download_file(csv_data)
+    file_path_train_data = download_file(y_train_data)
+
+    start_neural_network_task.add_task(start_neural_network, file_path_csv=file_path_csv_data, file_path_train=file_path_train_data)
     return {
-        "result": f"{file.filename} is upload"
+        "result": f"{file_path_csv_data} is upload, {file_path_train_data} is uploaded"
     }
 
 
